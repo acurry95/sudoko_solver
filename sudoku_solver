@@ -1,0 +1,56 @@
+import numpy as np
+
+sudoku =   [[5,3,0,0,7,0,0,0,0],
+            [6,0,0,1,9,5,0,0,0],
+            [0,9,8,0,0,0,0,6,0],
+            [8,0,0,0,6,0,0,0,3],
+            [4,0,0,8,0,3,0,0,1],
+            [7,0,0,0,2,0,0,0,6],
+            [0,6,0,0,0,0,2,8,0],
+            [0,0,0,4,1,9,0,0,5],
+            [0,0,0,0,8,0,0,7,9]]
+
+
+def crosshatch(sudoku):
+    solved = True
+    size = int(np.sqrt(len(sudoku[0])))
+    brackets = [[np.floor(x/size) + 3 * np.floor(y/3) for x in range(size**2)] for y in range(len(sudoku))]
+
+    for x in range(len(sudoku)):
+        for y in range(len(sudoku[0])):
+            if sudoku[x][y] == 0:
+                possibles = [x + 1 for x in range(len(sudoku[0]))]
+
+                three_sq = []
+                for i in range(len(brackets)):
+                    for j in range(len(brackets[0])):
+                        if brackets[x][y] == brackets[i][j]:
+                            three_sq.append(sudoku[i][j])
+
+                column = [sudoku[i][y] for i in range(len(sudoku))]
+                covered = list(set().union(three_sq, column, sudoku[x]))
+                for a in covered:
+                    if a in possibles:
+                        possibles.remove(a)
+
+                if len(possibles) == 1:
+                    sudoku[x][y] = possibles[0]
+                else:
+                    solved = False
+    return sudoku, solved
+
+
+
+
+solved = False
+count = 0
+while not solved:
+    sudoku, solved = crosshatch(sudoku)
+
+    count += 1
+    if count == 25:
+        solved = True
+
+print(count)
+for i in sudoku:
+    print (i)
